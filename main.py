@@ -39,11 +39,11 @@ for d in data:
                 text = text_template.format(product_name=d["product_name"], product_info=d["product_information"], product_category=product_category, datasheet=d["datasheet"])
             else:
                 text = text_template.format(product_name=d["product_name"], product_info=d["product_information"], product_category=product_category, datasheet="")
-            products.append({
-                "product": d["product_name"], 
-                "category": path, 
-                "text": text
-            })
+        products.append({
+            "product": d["product_name"], 
+            "category": path, 
+            "text": text
+        })
 
 
 with open("test_data.json", "w") as f:
