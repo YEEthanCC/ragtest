@@ -1,0 +1,86 @@
+# ROM-2820 Product Description
+
+## Product Overview
+The **ROM-2820** is an NXP i.MX 93 Cortex®-A55 OSM 1.1 Computer-on-Module featuring a dual-core processor running up to 1.7GHz, complemented by an Arm Cortex-M33 core and Ethos®-U65 microNPU. This compact computing module includes 2GB LPDDR4X memory with speeds up to 3733MT/s and offers extensive connectivity options including 4-lane MIPI-DSI, dual USB 2.0 ports, five UART interfaces, four I2C channels, 16 GPIO pins, two PWM outputs, and dual CAN-FD interfaces. The module maintains a compact OSM Size L form factor measuring 45 x 45 mm and supports Yocto Linux operating system.
+
+## Product Categories and Hierarchical Structure
+
+### Level 1: Embedded Computing
+At the top level, the ROM-2820 belongs to the **Embedded Computing** category, representing the foundational computing solutions for embedded applications.
+
+### Level 2: Arm-Based Computing Platforms
+Within Embedded Computing, the product is classified under **Arm-Based Computing Platforms**. Advantech provides a comprehensive series of Arm-based computing platforms with the latest embedded software services designed to accelerate Arm-based platform development.
+
+### Level 3: Computer-on-Module
+The third level categorization places the ROM-2820 as a **Computer-on-Module**. This category encompasses Arm-based Computer-on-Modules with various form factors including OSM, SMARC, Qseven, rugged RTX, and COM Express Type 7, along with embedded board design services.
+
+### Level 4: Open Standard Module (OSM)
+At the most specific level, the ROM-2820 is an **Open Standard Module (OSM)**. Advantech's OSM represents the SGeT standard for PCB soldering design with NXP platforms, featuring an ultra-low power, miniaturized design specifically optimized for AIoT endpoints.
+
+## Detailed Technical Specifications
+
+### Processor System
+- **Form Factor**: OSM 1.1
+- **CPU**: NXP i.MX 93 Cortex-A55 Dual-core (up to 1.7GHz)
+- **MCU**: 1 x Arm Cortex-M33 core
+- **NPU**: 1 x Ethos®-U65 microNPU
+
+### Memory Configuration
+- **Technology**: LPDDR4X
+- **Capacity**: 2GB up to 3733MT/s
+- **Flash**: 16GB eMMC NAND Flash for operating system storage
+
+### Graphics and Display
+- **Display Output**: 1 x 4-lane MIPI-DSI or 1 x single channel LVDS (either one)
+- **Graphics Engine**: NXP integrated 2D Graphic Acceleration
+- **HDMI**: Not supported
+- **Parallel RGB**: Not supported
+- **VGA**: Not supported
+
+### Networking
+- **Ethernet**: 2 x NXP i.MX 93 integrated RGMII
+- **Speed**: 2 x 10/100/1000 Mbps
+
+### Input/Output Interfaces
+- **USB**: 2 x USB 2.0
+- **Serial Ports**: 2 x 4-wire UART, 2 x 2-wire UART, 1 x 2-wire UART for debug console
+- **SPI**: 1 interface
+- **CAN-FD**: 2 interfaces
+- **GPIO**: 16 pins
+- **I2C**: 2 + 2 (dedicated to LVDS/MIPI-CSI)
+- **Camera Input**: 1 x 2-lane MIPI-CSI
+- **PWM**: 2 outputs
+- **Audio**: 1 x I2S
+- **SDIO**: 1 interface
+- **ADC**: 2 channels
+
+### Power and Environmental Specifications
+- **Power Supply Voltage**: 5V
+- **Power Consumption**: Maximum Load 2.1 watts, Idle mode 0.03 watts
+- **Operating Temperature**: 0°C to 60°C (standard) / -40°C to 85°C (extended)
+- **Operating Humidity**: 95% @ 40°C (non-condensing)
+
+### Physical Characteristics
+- **Dimensions**: 45 x 45 mm (Width x Depth)
+- **Form Factor**: OSM Size L
+- **Compliance**: RoHS Compliant 2002/95/EC
+
+### Security and System Features
+- **RTC**: External RTC
+- **Security**: NXP i.MX 93 integrated Trust Zone
+- **Operating System**: Yocto Linux
+- **Certifications**: CE/FCC Class B
+
+## Product Introduction and Applications
+The Advantech ROM-2820 OSM 1.1 Computer-on-Module is powered by the NXP i.MX 93 SoC, which combines Cortex-A55 dual-core processing with one Cortex-M33 real-time processor, Ethos®-U65 Neural Processing Unit (NPU), and 2D graphics engine. This comprehensive processing solution provides USB 2.0, Gigabit Ethernet, MIPI-CSI, I2C, SPI, GPIO, CAN-FD, and MIPI DSI display capabilities for embedded applications.
+
+The ROM-2820 is designed to pair with Advantech OSM carrier boards for faster end product peripheral integration and reduced time-to-market. The product comes with comprehensive development support including reference schematics, layout checklists documentation for carrier board development, open-sourced Linux BSP, test utilities, hardware design utilities, and reference drivers.
+
+## Ordering Information and Accessories
+The ROM-2820 is available in two temperature variants:
+- **ROM-2820WD-REA1E**: Standard operating temperature (0°C to 60°C)
+- **ROM-2820CD-REA1E**: Extended operating temperature (-40°C to 85°C)
+
+Both variants feature identical specifications including i.MX 93 dual-core processor, 2GB memory, 16GB flash memory, 5 UART interfaces, 2 LAN ports, 2 USB 2.0 ports, MIPI-DSI or LVDS display output, 45 x 45 mm form factor, and 5V power input.
+
+A comprehensive development kit (ROM-DK2820-F1A1E) is available as an evaluation platform, along with various optional accessories including debug cables, power adapters, power cords for different regions, and industrial-grade SD cards for extended temperature operation.
