@@ -10,11 +10,10 @@ text_template = """
 
 ## Product Overview
 {product_info}
-## Product Categories and Hierarchical Structure
 
+## Product Categories and Hierarchical Structure
 {product_category}
 
-## Detailed Technical Specifications
 {datasheet}
 """
 
@@ -24,21 +23,27 @@ category_template = """
 
 """
 
+datasheet_template = """
+## Detailed Technical Specifications
+{datasheet}
+"""
+
 for d in data:
     if d['category_2'] == "Edge AI & Intelligence Solutions" or d['category_2'] == "Edge AI & GPU Systems":
         path = ""
+        product_category = ""
         for level, category in enumerate(["category_1", "category_2", "category_3", "category_4", "category_5"]):
-            product_category = ""
             if category in d:
                 path+=f"{d[category]}/"
                 if level == 0:
-                    product_category = category_template.format(category_level=level + 1, category_name=d[category], category_info="")
+                    product_category+=category_template.format(category_level=level + 1, category_name=d[category], category_info="")
                 else:
-                    product_category = category_template.format(category_level=level + 1, category_name=d[category], category_info=d[f"{category}_information"])
-            if "datasheet" in d:
-                text = text_template.format(product_name=d["product_name"], product_info=d["product_information"], product_category=product_category, datasheet=d["datasheet"])
-            else:
-                text = text_template.format(product_name=d["product_name"], product_info=d["product_information"], product_category=product_category, datasheet="")
+                    product_category+=category_template.format(category_level=level + 1, category_name=d[category], category_info=d[f"{category}_information"])
+        if "datasheet" in d:
+
+            text = text_template.format(product_name=d["product_name"], product_info=d["product_information"], product_category=product_category, datasheet=datasheet_template.format(datasheet=d["datasheet"]))
+        else:
+            text = text_template.format(product_name=d["product_name"], product_info=d["product_information"], product_category=product_category, datasheet="")
         products.append({
             "product": d["product_name"], 
             "category": path, 

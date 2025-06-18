@@ -18,3 +18,11 @@ Ans:
 5. What is the operating temperature of ROM-2820? Ans: 0 ~ 60 °C/ -40 ~ 85 °C
 
 6. What is the memory capacity of ROM-2820? Ans:  1 x On-board 2GB
+
+7. Provide me products that can operate under high temperature
+
+8. 可以提供能夠在高溫下運作的產品嗎?
+
+9. 研華的產品主要提供那些方面的服務? Ans: 邊緣AI以及工業GPU的智能解決方案
+
+10. 邊緣AI是甚麼? Ans: 
