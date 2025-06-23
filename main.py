@@ -51,6 +51,7 @@ for d in data:
         })
 
 
+
 with open("test_data.json", "w") as f:
     json.dump(products, f, indent=4)
 
