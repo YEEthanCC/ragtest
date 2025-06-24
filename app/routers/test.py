@@ -49,7 +49,7 @@ def serialize_search_result(search_result: SearchResult) -> Dict[str, Any]:
     }
 
 test_router = APIRouter()
-PROJECT_DIRECTORY = "ragtest5"
+PROJECT_DIRECTORY = "ragtest6"
 COMMUNITY_LEVEL = 2
 RESPONSE_TYPE = "Multiple Paragraphs"
 graphrag_config = load_config(Path(PROJECT_DIRECTORY))

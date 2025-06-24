@@ -24,7 +24,7 @@ def should_continue(state: "AgentState") -> str:
         return END
 
 async def tool_node(state: "AgentState") -> str:
-    PROJECT_DIRECTORY = "ragtest5"
+    PROJECT_DIRECTORY = "ragtest6"
     graphrag_config = load_config(Path(PROJECT_DIRECTORY))
     entities = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/entities.parquet")
     communities = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/communities.parquet")
@@ -61,7 +61,7 @@ async def tool_node(state: "AgentState") -> str:
     return {'messages': [context['reports'].to_json(orient="records"), AIMessage(content=new_response)]}
 
 async def rag(state: "AgentState") -> str:
-    PROJECT_DIRECTORY = "ragtest5"
+    PROJECT_DIRECTORY = "ragtest6"
     graphrag_config = load_config(Path(PROJECT_DIRECTORY))
     text_units = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/text_units.parquet")
 
