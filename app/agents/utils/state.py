@@ -5,6 +5,7 @@ import getpass
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from typing import TypedDict, Annotated
 import operator
+import json
 
 
 load_dotenv()
@@ -30,3 +31,6 @@ prompt = ChatPromptTemplate([
 
 class AgentState(TypedDict):
     messages: Annotated[list, operator.add]
+
+with open("product_url.json", "r") as f:
+    product_urls = json.load(f)

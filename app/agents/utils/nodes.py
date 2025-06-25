@@ -1,4 +1,4 @@
-from .state import AgentState, llm, prompt
+from .state import AgentState, llm, prompt, product_urls
 from langchain_openai import AzureChatOpenAI
 from langchain_core.messages import AnyMessage, HumanMessage, AIMessage, SystemMessage
 from langgraph.graph import START, END
@@ -13,6 +13,40 @@ from graphrag.config.load_config import load_config
 from graphrag.index.typing.pipeline_run_result import PipelineRunResult
 import re
 
+from fastapi import HTTPException
+from fastapi.responses import JSONResponse
+
+from typing import Union, List, Dict, Any
+
+PROJECT_DIRECTORY = "ragtest6"
+COMMUNITY_LEVEL = 2
+RESPONSE_TYPE = "Multiple Paragraphs"
+graphrag_config = load_config(Path(PROJECT_DIRECTORY))
+entities = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/entities.parquet")
+communities = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/communities.parquet")
+community_reports = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/community_reports.parquet")
+text_units = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/text_units.parquet")
+relationships = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/relationships.parquet")
+
+def recursively_convert(obj: Any) -> Any:
+    if isinstance(obj, pd.DataFrame):
+        return obj.to_dict(orient="records")
+    elif isinstance(obj, list):
+        return [recursively_convert(item) for item in obj]
+    elif isinstance(obj, dict):
+        return {key: recursively_convert(value) for key, value in obj.items()}
+    return obj
+
+def process_context_data(context_data: Union[str, List[pd.DataFrame], Dict, pd.DataFrame]) -> Any:
+    if isinstance(context_data, str):
+        return context_data
+    if isinstance(context_data, pd.DataFrame):
+        return context_data.to_dict(orient="records")
+    if isinstance(context_data, (list, dict)):
+        return recursively_convert(context_data)
+    return None
+
+
 def get_input(state: "AgentState") -> str:
     msg = input("Input: ")
     return {"messages": [HumanMessage(msg)]}
@@ -24,41 +58,29 @@ def should_continue(state: "AgentState") -> str:
         return END
 
 async def tool_node(state: "AgentState") -> str:
-    PROJECT_DIRECTORY = "ragtest6"
-    graphrag_config = load_config(Path(PROJECT_DIRECTORY))
-    entities = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/entities.parquet")
-    communities = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/communities.parquet")
-    community_reports = pd.read_parquet(
-        f"{PROJECT_DIRECTORY}/output/community_reports.parquet"
-    )
-
-    response, context = await api.global_search(
-        config=graphrag_config,
-        entities=entities,
-        communities=communities,
-        community_reports=community_reports,
-        community_level=2,
-        dynamic_community_selection=False,
-        response_type="Multiple Paragraphs",
-        query=state['messages'][-1].content,
-    )
-    df = context['reports']
-    new_response = ""
-    pattern = r"\[Data: Reports \((.*?)\)\]"
-    for line in response.splitlines():
-        match = re.search(pattern, line)
-        if match:
-            for id in match.group(1).split(','):
-                try:
-                    content = df[df['id'] == id.strip()]['content'].iloc[0]
-                    line+=(f"<a>{id}</a>")
-                except Exception as e:
-                    print(f"Error: {e}")
-                    continue
-        line+="\n"        
-        new_response+=line
-    context['reports'].to_csv('result_context.csv', index=False)
-    return {'messages': [context['reports'].to_json(orient="records"), AIMessage(content=new_response)]}
+    try:
+        response, context = await api.local_search(
+                                config=graphrag_config,
+                                entities=entities,
+                                communities=communities,
+                                community_reports=community_reports,
+                                text_units=text_units,
+                                relationships=relationships,
+                                covariates=None,
+                                community_level=COMMUNITY_LEVEL,                                
+                                response_type=RESPONSE_TYPE,
+                                query=state['messages'][-1].content,
+                            )
+        # response = re.sub(r'\[Data: [^\]]*\]', '', response)
+        for p in re.findall(r'\[Product: ([^\]]+)\]', response):
+            if p in product_urls:
+                response = response.replace(f"[Product: {p}]", f"<a href='{product_urls[p]}'>&#128279;</a>")
+            else:
+                response = response.replace(f"[Product: {p}]", "")
+        return {'messages': [process_context_data(context), AIMessage(content=response)]}
+    except Exception as e:
+        print(f"Error: {e}")
+        return {'messages': [{}, AIMessage(content=f"Error: {e}")]}
 
 async def rag(state: "AgentState") -> str:
     PROJECT_DIRECTORY = "ragtest6"
