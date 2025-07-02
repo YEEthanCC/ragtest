@@ -5,7 +5,7 @@ from langchain_openai import AzureChatOpenAI
 import os
 import getpass
 from langgraph.graph import StateGraph, END, START
-from .utils import AgentState, get_input, call_model, should_continue, tool_node
+from .utils import AgentState, get_input, call_model, should_continue, tool_node, validate_search
 
 
 # Define the config
@@ -16,8 +16,10 @@ workflow = StateGraph(AgentState, config_schema=GraphConfig)
 workflow.add_node("get_input", get_input)
 workflow.add_node("action", tool_node)
 workflow.add_node("agent", call_model)
+workflow.add_node("validate", validate_search)
 workflow.add_edge(START, "action")
-workflow.add_edge("action", "agent")
+workflow.add_edge("action", "validate")
+workflow.add_edge("validate", "agent")
 workflow.add_edge("agent", END)
 
 graph = workflow.compile()

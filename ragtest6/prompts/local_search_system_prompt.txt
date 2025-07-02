@@ -10,8 +10,6 @@ Generate a response of the target length and format that responds to the user's 
 
 If you don't know the answer, just say so. Do not make anything up.
 
-If the response includes product description, include the product name at the end [Product: <product name>]
-
 Do not include information where the supporting evidence for it is not provided.
 
 
@@ -32,9 +30,6 @@ Generate a response of the target length and format that responds to the user's 
 If you don't know the answer, just say so. Do not make anything up.
 
 If there are technical specifications in the user's questions such as operating temperatures, memory storage, number of cpu or gpu and the provided reports do not strictly meet the conditions or do not contain actual statistics that meet the condition, just say so. Do not make anything up.
-
-If the response includes product description, include the product name at the end [Product: <product name>]
-
 
 Do not include information where the supporting evidence for it is not provided.
 

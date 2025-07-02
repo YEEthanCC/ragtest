@@ -12,16 +12,13 @@ class Message(BaseModel):
 
 @router.post("/chat/")
 async def connect(msg: Message):
-    print(f"Message received: {msg}")
-    response = []
     async for event in graph.astream({"messages": [HumanMessage(msg.message)]}, stream_mode='values'):
-        response.append(event["messages"][-1].content)
-    return {"response": event["messages"][-1].content, "context": event["messages"][-2]}
+        print(event["messages"][-1].content)
+    return {"response": event["messages"][-1].content}
 
 @router.post("/rag/")
 async def rag(msg: Message):
     print(f"Message received: {msg}")
-    response = []
     async for event in rag_graph.astream({"messages": [HumanMessage(msg.message)]}, stream_mode='values'):
-        response.append(event["messages"][-1].content)
-    return {"response": event["messages"][-1].content, "context": event["messages"][-2]}
+        print(event["messages"][-1].content)
+    return {"response": event["messages"][-1].content}
