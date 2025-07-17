@@ -3,7 +3,7 @@ from langchain_openai import AzureChatOpenAI
 from langchain_core.messages import AnyMessage, HumanMessage, AIMessage, SystemMessage, ToolMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langgraph.graph import START, END
-
+import json
 from pathlib import Path
 from pprint import pprint
 
@@ -21,6 +21,9 @@ from typing import Union, List, Dict, Any
 from langchain_core.tools import tool
 
 from langgraph.prebuilt import create_react_agent
+
+from difflib import get_close_matches
+
 
 PROJECT_DIRECTORY = "ragtest6"
 COMMUNITY_LEVEL = 2
@@ -90,11 +93,11 @@ async def tool_node(state: "AgentState") -> str:
     try:
         print(f"query: {state['messages'][-1].content}")
         response = await local_search(state['messages'][-1].content)
-        for p in re.findall(r'\[Product: ([^\]]+)\]', response):
-            if p in product_urls:
-                response = response.replace(f"[Product: {p}]", f"<a href='{product_urls[p]}'>&#128279;</a>")
-            else:
-                response = response.replace(f"[Product: {p}]", "")
+        # for p in re.findall(r'\[Product: ([^\]]+)\]', response):
+        #     if p in product_urls:
+        #         response = response.replace(f"[Product: {p}]", f"<a href='{product_urls[p]}'>&#128279;</a>")
+        #     else:
+        #         response = response.replace(f"[Product: {p}]", "")
         return {'messages': [AIMessage(content=response)]}
     except Exception as e:
         print(f"Error: {e}")
@@ -141,6 +144,62 @@ Examples:
         print(f"Error invoking model: {e}")
         raise HTTPException(status_code=500, detail="Model invocation failed")
 
+
+def get_product_name(state: "AgentState") -> str:
+    try:
+        judge_prompt = ChatPromptTemplate(
+            [
+                ("system", """{text}\nYou are a helpful assistant that identifies products from text above.
+
+        INSTRUCTIONS:
+        1. Review the text and identify the names of products mentioned.
+        2. Respond with product names as a raw string, separated by commas.
+
+        RESPONSE RULES:
+        - If NO product is mentioned, respond with: 'None'
+        - If ANY product is found, respond with product names as a raw string, separated by commas: product1,product2,product3
+
+        IMPORTANT:
+        - Only respond with "None" when no product is found.
+        - Do not include any other text or explanation, just the product names.""")
+            ]
+        )
+        match_prompt = ChatPromptTemplate(
+            [
+                ("system", """You are a helpful assistant that matches a list of products: {products} with a list of correct product names: {product_names}.
+
+        INSTRUCTIONS:
+        - Matches should be based on the closest name match.
+        - If a product name is not found, return 'No match found'.
+        - Respond in pure json format with the following structure:[{{"product1": "product_name1"}}, {{"product2": "product_name2"}}, ...]
+        - No additional text or explanation should be included in the response.""")
+            ]
+        )
+        res = llm.invoke(judge_prompt.invoke({'text': state['messages'][-1].content})).content
+        products = res.split(',')
+        trial_count = 0
+        product_names = []
+        while trial_count < 3:
+            try:
+                product_names = json.loads(llm.invoke(match_prompt.invoke({'products': products, 'product_names': product_urls.keys()})).content)
+                break
+            except Exception as e:
+                print(f"Error matching product names: {e}")
+            trial_count+=1
+        print(f"Product names: {product_names}")
+        text = state['messages'][-1].content
+        for p in product_names:
+            try: 
+                name = list(p.values())[0]
+                url = product_urls[name]
+                print(f"name: {name}, url: {url}")
+                text = text.replace(list(p.keys())[0], f"<a href='{url}'>{name} &#128279;</a>", 1)
+            except Exception as e:
+                continue
+        return {'messages': [AIMessage(content=text)]}
+    except Exception as e:
+        print(f"Error invoking model: {e}")
+        raise HTTPException(status_code=500, detail="Model invocation failed")
 
 async def rag(state: "AgentState") -> str:
     PROJECT_DIRECTORY = "ragtest6"
