@@ -29,6 +29,7 @@ prompt = ChatPromptTemplate([
     ("user", "{msg}")
 ])
 
+
 class AgentState(TypedDict):
     messages: Annotated[list, operator.add]
 
